@@ -1,22 +1,9 @@
 import multer from 'multer';
-import { GridFsStorage } from 'multer-gridfs-storage';
 import path from 'path';
 import { Request } from 'express';
 
-// Get MongoDB URI from environment
-const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/gogo';
-
-// Create GridFS storage engine
-const storage = new GridFsStorage({
-  url: mongoURI,
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req: Request, file: Express.Multer.File) => {
-    return {
-      filename: `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`,
-      bucketName: 'uploads' // Collection name in MongoDB
-    };
-  }
-});
+// Multer v2 uses memoryStorage by default
+// We'll store files in memory first, then manually upload to GridFS
 
 // File filter
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
@@ -40,9 +27,9 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
   }
 };
 
-// Configure multer with GridFS
+// Configure multer with memory storage
 export const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   fileFilter: fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB max file size

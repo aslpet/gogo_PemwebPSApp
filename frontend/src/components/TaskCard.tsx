@@ -15,7 +15,7 @@ export default function TaskCard({ task, onToggleComplete, onEdit, onDelete }: T
         {/* Checkbox */}
         <button
           onClick={() => onToggleComplete(task._id)}
-          className="flex-shrink-0 mt-1"
+          className="shrink-0 mt-1"
         >
           {task.completed ? (
             <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-400" />

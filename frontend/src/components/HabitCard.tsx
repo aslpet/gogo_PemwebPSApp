@@ -15,7 +15,7 @@ export default function HabitCard({ habit, onToggle, onEdit, onDelete }: HabitCa
         {/* Checkbox */}
         <button
           onClick={() => onToggle(habit._id)}
-          className="flex-shrink-0 mt-1"
+          className="shrink-0 mt-1"
         >
           {habit.completedToday ? (
             <CheckCircle2 className="w-7 h-7 text-green-600 dark:text-green-400" />
