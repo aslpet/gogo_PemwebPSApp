@@ -492,12 +492,6 @@ http://localhost:5173
 
 ---
 
-## 📄 License
-
-This project is created for educational purposes (Web Programming Course Final Project).
-
----
-
 ## 🙏 Acknowledgments
 
 - **React** - UI library
@@ -506,15 +500,6 @@ This project is created for educational purposes (Web Programming Course Final P
 - **Express.js** - Backend framework
 - **Lucide Icons** - Beautiful icons
 - **GitHub Contribution Graph** - Inspiration untuk heatmap
-
----
-
-## 📞 Contact & Support
-
-Jika ada pertanyaan atau issue:
-1. Buka GitHub Issues
-2. Email: [your-email@example.com]
-3. Discord: [Your Discord]
 
 ---
 
