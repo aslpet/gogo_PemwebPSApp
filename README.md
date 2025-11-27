@@ -483,8 +483,11 @@ http://localhost:5173
 ## 👨‍💻 Developer
 
 **Nama:** Ahmad Rafi Fadhillah Dwiputra 
+
 **NRP:** 5027241068
+
 **Kelas:** B 
+
 **Mata Kuliah:** Pemrograman Web
 
 ---
