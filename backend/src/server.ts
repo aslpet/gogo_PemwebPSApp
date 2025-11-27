@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import path from 'path';
 import { connectDatabase } from './config/database';
 
 // Import routes
@@ -25,9 +24,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -72,7 +68,8 @@ const startServer = async (): Promise<void> => {
     app.listen(PORT, () => {
       console.log(`\n🚀 Server is running on port ${PORT}`);
       console.log(`📡 API Base URL: http://localhost:${PORT}/api`);
-      console.log(`🏥 Health Check: http://localhost:${PORT}/health\n`);
+      console.log(`🏥 Health Check: http://localhost:${PORT}/health`);
+      console.log(`💾 Files stored in MongoDB GridFS\n`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

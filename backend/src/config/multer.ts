@@ -1,18 +1,20 @@
 import multer from 'multer';
+import { GridFsStorage } from 'multer-gridfs-storage';
 import path from 'path';
 import { Request } from 'express';
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination: (req: Request, file: Express.Multer.File, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req: Request, file: Express.Multer.File, cb) => {
-    // Generate unique filename: timestamp-originalname
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    const basename = path.basename(file.originalname, ext);
-    cb(null, `${basename}-${uniqueSuffix}${ext}`);
+// Get MongoDB URI from environment
+const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/gogo';
+
+// Create GridFS storage engine
+const storage = new GridFsStorage({
+  url: mongoURI,
+  options: { useNewUrlParser: true, useUnifiedTopology: true },
+  file: (req: Request, file: Express.Multer.File) => {
+    return {
+      filename: `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`,
+      bucketName: 'uploads' // Collection name in MongoDB
+    };
   }
 });
 
@@ -38,7 +40,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
   }
 };
 
-// Configure multer
+// Configure multer with GridFS
 export const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
