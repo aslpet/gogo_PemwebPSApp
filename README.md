@@ -482,11 +482,10 @@ http://localhost:5173
 
 ## 👨‍💻 Developer
 
-**Nama:** [Nama Anda]  
-**NIM:** [NIM Anda]  
-**Kelas:** [Kelas Anda]  
-**Mata Kuliah:** Pemrograman Web  
-**Dosen:** [Nama Dosen]
+**Nama:** Ahmad Rafi Fadhillah Dwiputra 
+**NRP:** 5027241068
+**Kelas:** B 
+**Mata Kuliah:** Pemrograman Web
 
 ---
 
