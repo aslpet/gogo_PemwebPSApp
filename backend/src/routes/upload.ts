@@ -7,11 +7,17 @@ import { Readable } from 'stream';
 
 const router = express.Router();
 
-// Initialize GridFS
-let gfs: Grid.Grid;
+// Initialize GridFS - declare as potentially undefined
+let gfs: Grid.Grid | undefined;
+
 mongoose.connection.once('open', () => {
-  gfs = Grid(mongoose.connection.db, mongoose.mongo);
-  gfs.collection('uploads');
+  // Ensure db exists before creating Grid instance
+  if (mongoose.connection.db) {
+    gfs = Grid(mongoose.connection.db, mongoose.mongo);
+    gfs.collection('uploads');
+  } else {
+    console.error('❌ MongoDB database not available for GridFS');
+  }
 });
 
 // Apply authentication
@@ -20,6 +26,15 @@ router.use(authenticate);
 // Upload single file to GridFS using Multer v2
 router.post('/single', upload.single('file'), async (req: Request, res: Response): Promise<void> => {
   try {
+    // Check if GridFS is initialized
+    if (!gfs) {
+      res.status(503).json({ 
+        success: false, 
+        message: 'File storage system not initialized. Please try again later.' 
+      });
+      return;
+    }
+
     if (!req.file) {
       res.status(400).json({ 
         success: false, 
@@ -84,6 +99,14 @@ router.post('/single', upload.single('file'), async (req: Request, res: Response
 // Upload multiple files to GridFS
 router.post('/multiple', upload.array('files', 5), async (req: Request, res: Response): Promise<void> => {
   try {
+    if (!gfs) {
+      res.status(503).json({ 
+        success: false, 
+        message: 'File storage system not initialized. Please try again later.' 
+      });
+      return;
+    }
+
     if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
       res.status(400).json({ 
         success: false, 
@@ -94,6 +117,11 @@ router.post('/multiple', upload.array('files', 5), async (req: Request, res: Res
 
     const uploadPromises = req.files.map((file: Express.Multer.File) => {
       return new Promise((resolve, reject) => {
+        if (!gfs) {
+          reject(new Error('GridFS not initialized'));
+          return;
+        }
+
         const readableStream = new Readable();
         readableStream.push(file.buffer);
         readableStream.push(null);
@@ -146,6 +174,14 @@ router.post('/multiple', upload.array('files', 5), async (req: Request, res: Res
 // Retrieve file from GridFS
 router.get('/file/:id', async (req: Request, res: Response): Promise<void> => {
   try {
+    if (!gfs) {
+      res.status(503).json({ 
+        success: false, 
+        message: 'File storage system not initialized.' 
+      });
+      return;
+    }
+
     const fileId = new mongoose.Types.ObjectId(req.params.id);
 
     // Find file metadata
@@ -163,6 +199,14 @@ router.get('/file/:id', async (req: Request, res: Response): Promise<void> => {
       res.set('Content-Disposition', `inline; filename="${file.filename}"`);
 
       // Stream file from GridFS
+      if (!gfs) {
+        res.status(503).json({ 
+          success: false, 
+          message: 'File storage system not initialized.' 
+        });
+        return;
+      }
+
       const readstream = gfs.createReadStream({
         _id: fileId
       });
@@ -190,6 +234,14 @@ router.get('/file/:id', async (req: Request, res: Response): Promise<void> => {
 // Delete file from GridFS
 router.delete('/file/:id', authenticate, async (req: Request, res: Response): Promise<void> => {
   try {
+    if (!gfs) {
+      res.status(503).json({ 
+        success: false, 
+        message: 'File storage system not initialized.' 
+      });
+      return;
+    }
+
     const fileId = new mongoose.Types.ObjectId(req.params.id);
 
     gfs.remove({ _id: fileId }, (err: any) => {
