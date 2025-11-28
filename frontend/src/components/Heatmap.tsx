@@ -98,7 +98,7 @@ export default function Heatmap() {
         <div className="inline-flex gap-1">
           {weeks.map((week, weekIndex) => (
             <div key={weekIndex} className="flex flex-col gap-1">
-              {week.map((day, dayIndex) => {
+              {week.map((day, _dayIndex) => {
                 const dayData = getDayData(day);
                 const count = dayData?.total || 0;
                 
